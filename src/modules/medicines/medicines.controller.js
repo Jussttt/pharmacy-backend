@@ -40,3 +40,51 @@ exports.deleteMedicine = asyncHandler(async (req, res) => {
     message: "Medicine deleted successfully",
   });
 });
+
+
+exports.searchMedicines = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+
+  const data = await service.searchMedicines(query);
+
+  res.status(200).json({
+    status: "success",
+    results: data.length,
+    data,
+  });
+});
+
+exports.getBatches = asyncHandler(async (req, res) => {
+
+  const { id } = req.params;
+
+  const data = await service.getMedicineBatches(id);
+
+  res.status(200).json({
+    status: "success",
+    results: data.length,
+    data
+  });
+
+});
+
+exports.updateBatch = async (req, res, next) => {
+  try {
+    const batchId = req.params.id;
+    const { mrp, purchase_price } = req.body;
+
+    const updated = await service.updateBatch(batchId, {
+      mrp,
+      purchase_price,
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Batch updated successfully",
+      data: updated,
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};

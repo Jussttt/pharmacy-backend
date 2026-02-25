@@ -41,3 +41,19 @@ exports.addStockBatch = async (data) => {
 exports.getStockByMedicine = async (medicine_id) => {
   return repo.getStockByMedicine(medicine_id);
 };
+
+exports.searchInventory = async (query) => {
+  if (!query || query.length < 2) {
+    throw new AppError("Minimum 2 characters required", 400);
+  }
+
+  const medicines = await repo.searchInventory(query);
+
+  for (const med of medicines) {
+    med.batches = await repo.getBatchesByMedicine(
+      med.medicine_id
+    );
+  }
+
+  return medicines;
+};

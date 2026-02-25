@@ -35,4 +35,25 @@ router.get(
   controller.getAllMedicines
 );
 
+router.get(
+  "/search",
+  authenticate,
+  authorizeRoles("Owner", "Pharmacist", "Staff"),
+  controller.searchMedicines
+);
+
+router.get(
+  "/:id/batches",
+  authenticate,
+  controller.getBatches
+);
+
+router.put(
+  "/batches/:id",
+  authenticate,
+  authorizeRoles("Owner"),
+  controller.updateBatch
+);
+
+
 module.exports = router;

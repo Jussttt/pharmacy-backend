@@ -15,10 +15,18 @@ router.post(
 
 // View stock
 router.get(
+  "/search",
+  authenticate,
+  authorizeRoles("Owner", "Pharmacist"),
+  controller.searchInventory
+);
+
+router.get(
   "/:medicineId",
   authenticate,
   authorizeRoles("Owner", "Pharmacist"),
   controller.getStockByMedicine
 );
+
 
 module.exports = router;

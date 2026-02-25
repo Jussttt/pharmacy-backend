@@ -8,6 +8,7 @@ router.use("/medicines", require("./modules/medicines/medicines.routes"));
 router.use("/inventory", require("./modules/inventory/inventory.routes"));
 router.use("/sales", require("./modules/sales/sales.routes"));
 router.use("/reports", require("./modules/reports/reports.routes"));
+router.use("/dashboard",require("./modules/dashboard/dashboard.routes"))
 // router.get("/protected", authenticate, (req, res) => {
 //   res.json({
 //     message: "Protected route accessed",

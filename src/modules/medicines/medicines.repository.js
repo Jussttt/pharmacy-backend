@@ -43,3 +43,61 @@ exports.softDeleteMedicine = async (medicine_id) => {
 
   return deleted;
 };
+
+exports.searchMedicines = async (query) => {
+  return db("medicines as m")
+    .join("stock_batches as sb", "sb.medicine_id", "m.medicine_id")
+    .select(
+      "m.medicine_id",
+      "m.name",
+      "m.generic_name",
+      "m.gst_rate",
+      db.raw("SUM(sb.quantity) as total_stock"),
+      db.raw("MIN(sb.expiry_date) as nearest_expiry"),
+      db.raw("MIN(sb.mrp) as mrp")
+    )
+    .whereRaw(
+      "(m.name ILIKE ? OR m.generic_name ILIKE ?)",
+      [`%${query}%`, `%${query}%`]
+    )
+    .andWhere("m.is_active", true)
+    .andWhere("sb.expiry_date", ">", db.fn.now())
+    .andWhere("sb.quantity", ">", 0)
+    .groupBy("m.medicine_id")
+    .orderBy("m.name")
+    .limit(10);
+};
+
+exports.getBatchesByMedicineId = async (medicineId) => {
+  return db("stock_batches")
+    .where({ medicine_id: medicineId })
+    .andWhere("quantity", ">", 0)
+    .orderBy("expiry_date", "asc") // FEFO
+    .select(
+      "batch_id",
+      "batch_number",
+      "mfg_date",
+      "expiry_date",
+      "quantity",
+      "purchase_price",
+      "mrp"
+    );
+};
+
+exports.getBatchById = async (batchId) => {
+  return await db("stock_batches")
+    .where({ batch_id: batchId })
+    .first();
+};
+
+exports.updateBatch = async (batchId, data) => {
+  const [updated] = await db("stock_batches")
+    .where({ batch_id: batchId })
+    .update({
+      mrp: data.mrp,
+      purchase_price: data.purchase_price
+    })
+    .returning("*");
+
+  return updated;
+};

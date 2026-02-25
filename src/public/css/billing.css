@@ -1,0 +1,51 @@
+.billing-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+}
+
+.billing-table th {
+    background: #e3f2fd;
+    text-align: left;
+}
+
+.billing-table th,
+.billing-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.billing-table input {
+    width: 120px;
+    padding: 6px;
+}
+
+.search-results {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+}
+
+.search-results div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.search-results div:hover {
+    background: #f0f8ff;
+}
+
+#addRow {
+    margin-top: 15px;
+    padding: 8px 15px;
+}
+
+.billing-summary {
+    margin-top: 20px;
+    text-align: right;
+}

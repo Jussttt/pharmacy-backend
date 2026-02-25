@@ -18,3 +18,41 @@ exports.getStockByMedicine = async (medicine_id) => {
     .andWhere("quantity", ">", 0)
     .orderBy("expiry_date", "asc");
 };
+
+exports.searchInventory = async (query) => {
+  const medicines = await db("medicines as m")
+    .leftJoin("stock_batches as sb", "sb.medicine_id", "m.medicine_id")
+    .select(
+      "m.medicine_id",
+      "m.name",
+      "m.generic_name",
+      "m.atc_code",
+      "m.hsn_code",
+      "m.gst_rate",
+      "m.is_active",
+      db.raw("COALESCE(SUM(sb.quantity), 0) as total_stock")
+    )
+    .whereRaw(
+      "(m.name ILIKE ? OR m.generic_name ILIKE ?)",
+      [`%${query}%`, `%${query}%`]
+    )
+    .groupBy("m.medicine_id")
+    .orderBy("m.name")
+    .limit(10);
+
+  return medicines;
+};
+
+exports.getBatchesByMedicine = async (medicine_id) => {
+  return db("stock_batches")
+    .select(
+      "batch_id",
+      "batch_number",
+      "expiry_date",
+      "quantity",
+      "purchase_price",
+      "mrp"
+    )
+    .where({ medicine_id })
+    .orderBy("expiry_date", "asc");
+};

@@ -1,15 +1,20 @@
 const AppError = require("../utils/AppError");
 
-module.exports = function authorizeRoles(...allowedRoles) {
+module.exports = (...roles) => {
   return (req, res, next) => {
-    if (!req.user) {
-      return next(new AppError("Unauthorized access", 401));
-    }
 
-    if (!allowedRoles.includes(req.user.role)) {
-      return next(
-        new AppError("Forbidden: You do not have permission", 403)
-      );
+    if (!req.user || !roles.includes(req.user.role)) {
+
+      // API → JSON
+      if (req.originalUrl.startsWith("/api")) {
+        return res.status(403).json({
+          status: "fail",
+          message: "Access denied"
+        });
+      }
+
+      // VIEW → render 403 page
+      return res.status(403).render("403");
     }
 
     next();

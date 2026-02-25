@@ -21,3 +21,15 @@ exports.getStockByMedicine = asyncHandler(async (req, res) => {
     data: stock,
   });
 });
+
+exports.searchInventory = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+
+  const data = await service.searchInventory(query);
+
+  res.status(200).json({
+    status: "success",
+    results: data.length,
+    data,
+  });
+});
